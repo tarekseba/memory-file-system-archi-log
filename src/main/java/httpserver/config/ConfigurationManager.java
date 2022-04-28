@@ -1,7 +1,7 @@
 package httpserver.config;
 
 public class ConfigurationManager {
-    static ConfigurationManager configurationManagerInstance;
+    private static ConfigurationManager configurationManagerInstance;
     private Configuration configuration;
 
     private ConfigurationManager() {
@@ -15,6 +15,14 @@ public class ConfigurationManager {
     }
 
     public void loadConfigFile() {
+        System.out.println("hhhh");
+    }
 
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
     }
 }
