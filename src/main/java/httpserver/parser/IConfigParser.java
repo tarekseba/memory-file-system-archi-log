@@ -1,5 +1,7 @@
 package httpserver.parser;
 
-public interface IConfigParser {
+import httpserver.config.IConfigurationBuilder;
 
+public interface IConfigParser {
+    public void load(IConfigurationBuilder builder, String file) throws Exception;
 }

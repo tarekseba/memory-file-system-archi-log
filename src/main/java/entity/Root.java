@@ -40,6 +40,11 @@ public class Root implements IFolder{
         return content;
     }
 
+    @Override
+    public IFSEntity getElement(String[] path, int i) {
+        return null;
+    }
+
     /*public IFSEntity getElement(String[] path, int index) {
         IFolder entity = this.content.get(path[index]);
         if(entity != null) {

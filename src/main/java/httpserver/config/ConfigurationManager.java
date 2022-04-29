@@ -1,5 +1,7 @@
 package httpserver.config;
 
+import httpserver.parser.XMLConfigParser;
+
 public class ConfigurationManager {
     private static ConfigurationManager configurationManagerInstance;
     private Configuration configuration;
@@ -14,8 +16,15 @@ public class ConfigurationManager {
         return configurationManagerInstance;
     }
 
-    public void loadConfigFile() {
-        System.out.println("hhhh");
+    public void loadConfigFile(String path) {
+        IConfigurationBuilder builder = new ConfigurationBuilder();
+        XMLConfigParser xmlParser = new XMLConfigParser();
+        try {
+            xmlParser.load(builder, path);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        this.configuration = builder.getResult();
     }
 
     public Configuration getConfiguration() {
