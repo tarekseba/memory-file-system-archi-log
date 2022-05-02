@@ -1,14 +1,33 @@
 package entity;
 
+import java.util.Arrays;
+
 public class File implements IFSEntity{
     private String name;
-    private Byte[] content;
+    private byte[] content;
     private FILE_TYPE type;
 
-    public File(String name, Byte[] content) {
+    public File(String name, byte[] content) {
         this.name = name;
         this.content = content;
         type= FILE_TYPE.FILE;
+    }
+
+    @Override
+    public String toString() {
+        return "File={" +
+                "name='" + name + '\'' +
+                ", content=" + Arrays.toString(content) +
+                ", type=" + type +
+                '}';
+    }
+
+    public void setContent(byte[] content) {
+        this.content = content;
+    }
+
+    public byte[] getContent() {
+        return content;
     }
 
     @Override
