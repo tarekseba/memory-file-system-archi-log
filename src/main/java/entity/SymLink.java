@@ -1,5 +1,11 @@
 package entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Setter
+@Getter
 public class SymLink implements IFSEntity{
     private String name;
     private String content;
@@ -9,6 +15,15 @@ public class SymLink implements IFSEntity{
         this.name = name;
         this.content = content;
         type= FILE_TYPE.LINK;
+    }
+
+    @Override
+    public String toString() {
+        return "SymLink{" +
+                "name:'" + name + '\'' +
+                ", content:'" + content + '\'' +
+                ", type:" + type +
+                '}';
     }
 
     @Override

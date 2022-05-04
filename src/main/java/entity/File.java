@@ -1,5 +1,9 @@
 package entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.Arrays;
 
 public class File implements IFSEntity{
@@ -13,14 +17,14 @@ public class File implements IFSEntity{
         type= FILE_TYPE.FILE;
     }
 
-    @Override
+    /*@Override
     public String toString() {
-        return "File={" +
+        return "File{" +
                 "name='" + name + '\'' +
-                ", content=" + Arrays.toString(content) +
-                ", type=" + type +
+                ", content:" + Arrays.toString(content) +
+                ", type:" + type +
                 '}';
-    }
+    }*/
 
     public void setContent(byte[] content) {
         this.content = content;
@@ -32,6 +36,9 @@ public class File implements IFSEntity{
 
     @Override
     public int getSize() {
+        if(content==null){
+            return 0;
+        }
         return content.length;
     }
 

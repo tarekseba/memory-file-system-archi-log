@@ -1,5 +1,6 @@
 package httpserver.handlers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -7,7 +8,9 @@ import entity.File;
 import entity.Folder;
 import entity.Root;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.HashMap;
 
@@ -37,19 +40,33 @@ public class MainHandler implements HttpHandler {
         responseHeader.set("Content-Type", "application/json");
         exchange.sendResponseHeaders(200,0);
 
+        ObjectMapper mapper=new ObjectMapper();
+
+
         if(methodeRequest.equalsIgnoreCase("GET")){
 
             OutputStream reponse = exchange.getResponseBody();
 
-            if(exchange.getRequestURI().toString()=="/"){
-                reponse.write(root.getElement(exchange.getRequestURI().toString().split("/"),1).toString().getBytes());
+            if(exchange.getRequestURI().toString().equals("/")){
+
+                try {
+                    //mapper.writeValue(new java.io.File("root.json"), root.getContent());
+                    String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root.getContent());
+                    reponse.write(jsonString.getBytes());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             else {
                 String[] path=exchange.getRequestURI().toString().split("/");
-
-                reponse.write(root.getElement(path,1).toString().getBytes());
+                try {
+                    //mapper.writeValue(new java.io.File("root.json"), root.getContent());
+                    String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root.getElement(path,1));
+                    reponse.write(jsonString.getBytes());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
 
             reponse.close();
         }
@@ -64,6 +81,21 @@ public class MainHandler implements HttpHandler {
             }
             System.out.println("delete");
             reponse.close();
+        }
+        else if (methodeRequest.equalsIgnoreCase("POST")){
+            InputStreamReader isr =  new InputStreamReader(exchange.getRequestBody(),"utf-8");
+            BufferedReader br = new BufferedReader(isr);
+
+            // From now on, the right way of moving from bytes to utf-8 characters:
+            int b;
+            StringBuilder buf = new StringBuilder(512);
+            while ((b = br.read()) != -1) {
+                buf.append((char) b);
+            }
+            br.close();
+            isr.close();
+            //Folder file=objectMapper.readValue(buf.toString(),Folder.class);
+
         }
     }
 }

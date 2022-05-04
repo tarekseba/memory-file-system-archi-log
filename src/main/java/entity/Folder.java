@@ -1,9 +1,14 @@
 package entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+@Setter
+@Getter
 public class Folder implements IFolder{
     private  String name;
     private Map<String,IFSEntity> content;
@@ -23,15 +28,15 @@ public class Folder implements IFolder{
         this.content = content;
     }
 
-    @Override
+    /*@Override
     public String toString() {
-        return "Folder={" +
-                "name='" + name + '\'' +
-                ", content=" + content +
-                ", type=" + type +
+        return "Folder{" +
+                "name:'" + name + '\'' +
+                ", content:" + content +
+                ", type:" + type +
                 '}';
     }
-
+*/
     @Override
     public int getSize() {
         int size=0;

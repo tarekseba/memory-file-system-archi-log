@@ -1,8 +1,14 @@
 package entity;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Setter
+@Getter
 public class Root implements IFolder,IFSEntity{
     private static final String NAME  = "/";
     private static Root instance;
@@ -20,12 +26,12 @@ public class Root implements IFolder,IFSEntity{
         return instance;
     }
 
-    @Override
+    /*@Override
     public String toString() {
-        return "Root={" +
-                "content=" + content +
+        return "Root{" +
+                "content:" + content.toString() +
                 '}';
-    }
+    }*/
 
     @Override
     public int getSize() {
