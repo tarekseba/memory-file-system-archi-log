@@ -25,12 +25,7 @@ public class Root implements IFolder,IFSEntity{
         return instance;
     }
 
-    /*@Override
-    public String toString() {
-        return "Root{" +
-                "content:" + content.toString() +
-                '}';
-    }*/
+
 
     @Override
     public int getSize() {

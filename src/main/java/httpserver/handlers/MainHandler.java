@@ -13,7 +13,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class MainHandler implements HttpHandler {
     Root root;
@@ -55,8 +57,13 @@ public class MainHandler implements HttpHandler {
 
                 try {
                     //mapper.writeValue(new java.io.File("root.json"), root.getContent());
-                    String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root.getContent());
-                    reponse.write(jsonString.getBytes());
+                    List<IFSEntity> list=new ArrayList<>(root.getContent().values());
+
+                    String jsonString = mapper.writeValueAsString(list);
+                    StringBuilder stringBuilder=new StringBuilder(jsonString);
+                    stringBuilder.insert(0, "{\"result\": ");
+                    stringBuilder.insert(stringBuilder.length(), "}");
+                    reponse.write(stringBuilder.toString().getBytes());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -65,7 +72,12 @@ public class MainHandler implements HttpHandler {
                 String[] path=exchange.getRequestURI().toString().split("/");
                 try {
                     //mapper.writeValue(new java.io.File("root.json"), root.getContent());
-                    String jsonString = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(root.getElement(path,1));
+                    String jsonString = mapper.writeValueAsString(root.getElement(path,1));
+                   /* StringBuilder stringBuilder=new StringBuilder(jsonString);
+                    stringBuilder.setCharAt(0,'[');
+                    stringBuilder.setCharAt(stringBuilder.length()-1,']');
+                    stringBuilder.insert(0, "{\"result\": ");
+                    stringBuilder.insert(stringBuilder.length(), "}");*/
                     reponse.write(jsonString.getBytes());
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -87,6 +99,7 @@ public class MainHandler implements HttpHandler {
             reponse.close();
         }
         else if (methodeRequest.equalsIgnoreCase("POST")){
+            OutputStream reponse = exchange.getResponseBody();
             InputStreamReader isr =  new InputStreamReader(exchange.getRequestBody(),"utf-8");
             BufferedReader br = new BufferedReader(isr);
 
@@ -98,9 +111,13 @@ public class MainHandler implements HttpHandler {
             }
             br.close();
             isr.close();
-            IFSEntity entity=mapper.readValue(buf.toString(), IFSEntity.class);
-            System.out.println(entity);
-
+            reponse.close();
+            ObjectMapper objectMapper=new ObjectMapper();
+            //objectMapper.read
+            System.out.println(buf.toString());
+            File file=objectMapper.readValue(buf.toString(),File.class);
+            String zzz="eeee";
+            System.out.println(zzz);
         }
     }
 }
