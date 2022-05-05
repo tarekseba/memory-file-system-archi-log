@@ -6,6 +6,8 @@ import lombok.ToString;
 
 import java.util.Arrays;
 
+@Setter
+@Getter
 public class File implements IFSEntity{
     private String name;
     private byte[] content;

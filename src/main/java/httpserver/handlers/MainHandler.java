@@ -4,15 +4,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import entity.File;
-import entity.Folder;
-import entity.IFSEntity;
-import entity.Root;
+import entity.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +20,7 @@ public class MainHandler implements HttpHandler {
     public MainHandler() {
         root=Root.getInstance();
         Folder folder=new Folder("folder1",new HashMap<>());
-        folder.addElement(new File("file5",null));
+        folder.addElement(new File("file5","file5".getBytes()));
         Folder folder2=new Folder("folder2",new HashMap<>());
         folder2.addElement(new File("file7",null));
         folder.addElement(new File("file5",null));
@@ -52,13 +50,10 @@ public class MainHandler implements HttpHandler {
         if(methodeRequest.equalsIgnoreCase("GET")){
 
             OutputStream reponse = exchange.getResponseBody();
-
             if(exchange.getRequestURI().toString().equals("/")){
 
                 try {
-                    //mapper.writeValue(new java.io.File("root.json"), root.getContent());
                     List<IFSEntity> list=new ArrayList<>(root.getContent().values());
-
                     String jsonString = mapper.writeValueAsString(list);
                     StringBuilder stringBuilder=new StringBuilder(jsonString);
                     stringBuilder.insert(0, "{\"result\": ");
@@ -71,38 +66,42 @@ public class MainHandler implements HttpHandler {
             else {
                 String[] path=exchange.getRequestURI().toString().split("/");
                 try {
-                    //mapper.writeValue(new java.io.File("root.json"), root.getContent());
-                    String jsonString = mapper.writeValueAsString(root.getElement(path,1));
-                   /* StringBuilder stringBuilder=new StringBuilder(jsonString);
-                    stringBuilder.setCharAt(0,'[');
-                    stringBuilder.setCharAt(stringBuilder.length()-1,']');
-                    stringBuilder.insert(0, "{\"result\": ");
-                    stringBuilder.insert(stringBuilder.length(), "}");*/
-                    reponse.write(jsonString.getBytes());
+                    String jsonString="";
+                    IFSEntity entity=root.getElement(path,1);
+                    if(entity.getType().toString().equals("FILE")){
+                        reponse.write(((File)entity).getContent());
+                    }
+                    else if (entity.getType().toString().equals("FOLDER")){
+                        List<IFSEntity> list=new ArrayList<>(((Folder)entity).getContent().values());
+                        jsonString = mapper.writeValueAsString(list);
+                        StringBuilder stringBuilder=new StringBuilder(jsonString);
+                        stringBuilder.insert(0, "{\"result\": ");
+                        stringBuilder.insert(stringBuilder.length(), "}");
+                        reponse.write(stringBuilder.toString().getBytes());
+                    }
+                    else {
+
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
             reponse.close();
         }
         else if (methodeRequest.equalsIgnoreCase("DELETE")){
-
             OutputStream reponse = exchange.getResponseBody();
-
             if(exchange.getRequestURI().toString()!="/"){
-                if(root.removeElement("/folder1/folder2".split("/"),1)){
+                if(root.removeElement(exchange.getRequestURI().toString().split("/"),1)){
                     reponse.write("Suppression effectué".getBytes());
                 }
             }
-            System.out.println("delete");
             reponse.close();
         }
         else if (methodeRequest.equalsIgnoreCase("POST")){
             OutputStream reponse = exchange.getResponseBody();
             InputStreamReader isr =  new InputStreamReader(exchange.getRequestBody(),"utf-8");
             BufferedReader br = new BufferedReader(isr);
-
             // From now on, the right way of moving from bytes to utf-8 characters:
             int b;
             StringBuilder buf = new StringBuilder(512);
@@ -112,12 +111,46 @@ public class MainHandler implements HttpHandler {
             br.close();
             isr.close();
             reponse.close();
-            ObjectMapper objectMapper=new ObjectMapper();
-            //objectMapper.read
-            System.out.println(buf.toString());
-            File file=objectMapper.readValue(buf.toString(),File.class);
-            String zzz="eeee";
-            System.out.println(zzz);
+            try {
+                ObjectMapper objectMapper=new ObjectMapper();
+
+                Dto dto=objectMapper.readValue(buf.toString(), Dto.class);
+
+                if(dto.getType().toString().equals("FILE")){
+                    byte[] tabByte=new byte[dto.getContent().values().size()];
+                    int i = 0;
+                    for(Byte by : (new ArrayList<>(dto.getContent().values()))){
+                        tabByte[i++] = by.byteValue();
+                    }
+                    if(exchange.getRequestURI().toString().equals("/")){
+                        root.addElement(new File(dto.getName(), tabByte));
+                    }
+                    else {
+                        String[] path=exchange.getRequestURI().toString().split("/");
+                        IFSEntity entity=root.getElement(path,1);
+                        if(entity!=null && entity.getType().toString().equals("FOLDER")){
+                            ((Folder)entity).addElement(new File(dto.getName(), tabByte));
+                        }
+                    }
+                } else if (dto.getType().toString().equals("FOLDER")) {
+                    if(exchange.getRequestURI().toString().equals("/")){
+                        root.addElement(new Folder(dto.getName(),new HashMap<>()));
+                    }
+                    else {
+                        String[] path=exchange.getRequestURI().toString().split("/");
+                        IFSEntity entity=root.getElement(path,1);
+                        if(entity!=null && entity.getType().toString().equals("FOLDER")){
+                            ((Folder)entity).addElement(new Folder(dto.getName(), new HashMap<>()));
+                        }
+                    }
+                }
+            }
+            catch (Exception exception){
+                exception.printStackTrace();
+            }
+        }
+        else {
+            exchange.getResponseBody().close();
         }
     }
 }
