@@ -29,7 +29,7 @@ public class HttpServer {
             //Create HttpServer which is listening on the given port
             httpServer = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(configManager.getConfiguration().getPort()), 0);
             //Create a new context for the given context and handler
-            httpServer.createContext("/" + configManager.getConfiguration().getContext(), new MainHandler());
+            httpServer.createContext("/", new MainHandler());
             //Create a default executor
             httpServer.setExecutor(Executors.newCachedThreadPool());
         } catch (IOException e) {

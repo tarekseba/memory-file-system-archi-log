@@ -39,6 +39,9 @@ public class MainHandler implements HttpHandler {
 
         Headers responseHeader=exchange.getResponseHeaders();
         responseHeader.set("Content-Type", "application/json");
+        responseHeader.set("Access-Control-Allow-Origin", "*");
+        responseHeader.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        responseHeader.add("Access-Control-Allow-Headers", "Content-Type,Authorization");
         exchange.sendResponseHeaders(200,0);
 
         ObjectMapper mapper=new ObjectMapper();
