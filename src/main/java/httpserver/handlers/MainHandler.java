@@ -6,6 +6,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import entity.File;
 import entity.Folder;
+import entity.IFSEntity;
 import entity.Root;
 
 import java.io.BufferedReader;
@@ -94,7 +95,8 @@ public class MainHandler implements HttpHandler {
             }
             br.close();
             isr.close();
-            //Folder file=objectMapper.readValue(buf.toString(),Folder.class);
+            IFSEntity entity=mapper.readValue(buf.toString(), IFSEntity.class);
+            System.out.println(entity);
 
         }
     }

@@ -7,8 +7,7 @@ import lombok.ToString;
 import java.util.HashMap;
 import java.util.Map;
 
-@Setter
-@Getter
+
 public class Root implements IFolder,IFSEntity{
     private static final String NAME  = "/";
     private static Root instance;
