@@ -7,12 +7,12 @@ import lombok.ToString;
 @Setter
 @Getter
 public class SymLink implements IFSEntity{
-    private String name;
+    private Name name;
     private String content;
     private FILE_TYPE type;
 
-    public SymLink(String name, String content) {
-        this.name = name;
+    public SymLink(String name, String content) throws IllegalArgumentException {
+        this.name = new Name(name);
         this.content = content;
         type = FILE_TYPE.LINK;
     }
@@ -33,7 +33,7 @@ public class SymLink implements IFSEntity{
 
     @Override
     public String getName() {
-        return name;
+        return name.getName();
     }
 
     @Override

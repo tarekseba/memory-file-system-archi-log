@@ -9,12 +9,12 @@ import java.util.Arrays;
 @Setter
 @Getter
 public class File implements IFSEntity{
-    private String name;
+    private Name name;
     private byte[] content;
     private FILE_TYPE type;
 
-    public File(String name, byte[] content) {
-        this.name = name;
+    public File(String name, byte[] content) throws IllegalArgumentException {
+        this.name = new Name(name);
         this.content = content;
         type= FILE_TYPE.FILE;
     }
@@ -46,7 +46,7 @@ public class File implements IFSEntity{
 
     @Override
     public String getName() {
-        return name;
+        return name.getName();
     }
 
     @Override

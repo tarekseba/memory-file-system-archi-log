@@ -8,12 +8,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 public class Folder implements IFolder{
-    private  String name;
+    private  Name name;
     private Map<String,IFSEntity> content;
     private FILE_TYPE type;
 
-    public Folder(String name, Map<String,IFSEntity> content) {
-        this.name = name;
+    public Folder(String name, Map<String,IFSEntity> content) throws IllegalArgumentException {
+        this.name = new Name(name);
         this.content = content;
         type= FILE_TYPE.FOLDER;
     }
@@ -47,7 +47,7 @@ public class Folder implements IFolder{
 
     @Override
     public String getName() {
-        return name;
+        return name.getName();
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Folder implements IFolder{
     }
 
     public void addF(IFSEntity fs){
-        content.put(name,fs);
+        content.put(name.getName(), fs);
     }
 
 
