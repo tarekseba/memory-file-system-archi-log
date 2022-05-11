@@ -1,57 +1,35 @@
 package httpserver;
 
-import com.sun.net.httpserver.HttpExchange;
-import entity.File;
-import entity.Folder;
-import entity.Root;
-import facade.IFileSystem;
-import httpserver.config.Configuration;
-import httpserver.config.ConfigurationBuilder;
-import httpserver.config.ConfigurationManager;
 import com.sun.net.httpserver.HttpHandler;
-import httpserver.config.IConfigurationBuilder;
+import factory.AbstractIFSEntityFactory;
+import httpserver.config.ConfigurationManager;
+import httpserver.formatter.IFormatter;
+import httpserver.formatter.JSONFormatter;
 import httpserver.handlers.MainHandler;
-import httpserver.parser.XMLConfigParser;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
 import java.util.concurrent.Executors;
 
-public class HttpServer {
-    static com.sun.net.httpserver.HttpServer httpServer;
-    static ConfigurationManager configManager = ConfigurationManager.getInstance();
-    static IFileSystem root;
+public class HttpServer implements IHttpServer{
+    com.sun.net.httpserver.HttpServer httpServer;
+    ConfigurationManager configManager = ConfigurationManager.getInstance();
 
-    public static void createServer() {
+    public void createServer(AbstractIFSEntityFactory entityFactory) {
+        IFormatter formatter = new JSONFormatter();
+        HttpHandler handler =  new MainHandler(entityFactory, formatter);
         try {
-            configManager.loadConfigFile("src/main/resources/XML/config.xml");
-            //Create HttpServer which is listening on the given port
-            httpServer = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(configManager.getConfiguration().getPort()), 0);
-            //Create a new context for the given context and handler
-            httpServer.createContext("/", new MainHandler());
-            //Create a default executor
-            httpServer.setExecutor(Executors.newCachedThreadPool());
+            this.configManager.loadConfigFile("src/main/resources/XML/config.xml");
+            this.httpServer = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(configManager.getConfiguration().getPort()), 0);
+            this.httpServer.createContext("/", handler);
+            this.httpServer.setExecutor(Executors.newCachedThreadPool());
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void main(String[] args) throws Exception {
-        /*configManager.loadConfigFile();
-        Configuration config = configManager.getConfiguration();
-        String path="/folder1/folder2/file1";
-        System.out.println(path.split("/").length);*/
-        IConfigurationBuilder builder = new ConfigurationBuilder();
-        XMLConfigParser xmlParser = new XMLConfigParser();
-        try {
-            xmlParser.load(builder, "src/main/resources/XML/config.xml");
-            createServer();
-            httpServer.start();
-            System.out.println("Le serveur en ecoute sur le port: "+builder.getResult().getPort());
-        } catch (Exception e) {
-            System.out.println("INSIDE EXCEPTION");
-            e.printStackTrace();
-        }
+    public void startServer(){
+        this.httpServer.start();
+        System.out.println("Le serveur en ecoute sur le port: " + this.configManager.getConfiguration().getPort());
     }
 }

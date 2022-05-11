@@ -14,7 +14,7 @@ public class SymLink implements IFSEntity{
     public SymLink(String name, String content) {
         this.name = name;
         this.content = content;
-        type= FILE_TYPE.LINK;
+        type = FILE_TYPE.LINK;
     }
 
     @Override

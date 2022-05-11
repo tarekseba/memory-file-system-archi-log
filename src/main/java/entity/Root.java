@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class Root implements IFolder,IFSEntity{
+public class Root implements IFolder{
     private static final String NAME  = "/";
     private static Root instance;
     private Map<String,IFSEntity> content;

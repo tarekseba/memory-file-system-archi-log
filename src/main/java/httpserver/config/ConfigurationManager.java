@@ -1,5 +1,6 @@
 package httpserver.config;
 
+import httpserver.parser.IConfigParser;
 import httpserver.parser.XMLConfigParser;
 
 public class ConfigurationManager {
@@ -18,9 +19,9 @@ public class ConfigurationManager {
 
     public void loadConfigFile(String path) {
         IConfigurationBuilder builder = new ConfigurationBuilder();
-        XMLConfigParser xmlParser = new XMLConfigParser();
+        IConfigParser parser = new XMLConfigParser();
         try {
-            xmlParser.load(builder, path);
+            parser.load(builder, path);
         } catch(Exception e) {
             e.printStackTrace();
         }
