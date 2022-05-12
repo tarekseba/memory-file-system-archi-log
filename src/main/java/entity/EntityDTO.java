@@ -9,7 +9,7 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString
-public class Dto {
+public class EntityDTO {
     String name;
     FILE_TYPE type;
     Map<String, Byte> content;
