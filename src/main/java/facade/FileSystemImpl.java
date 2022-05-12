@@ -7,16 +7,8 @@ public class FileSystemImpl implements IFileSystem {
     private Root root;
 
 
-
     @Override
     public IFSEntity getElement(String path) {
-        String[] pathSplit = path.split("/");
-        if(pathSplit.length == 1) {
-            return root;
-        } else if(pathSplit.length > 1) {
-
-            return root.getElement(pathSplit, 1);
-        }
         return null;
     }
 

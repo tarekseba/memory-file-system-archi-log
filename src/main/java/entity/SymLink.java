@@ -41,7 +41,7 @@ public class SymLink implements ISymLink {
     }
 
     @Override
-    public String getContent() {
+    public String getPath() {
         return content;
     }
 }

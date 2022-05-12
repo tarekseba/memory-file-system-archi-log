@@ -2,12 +2,10 @@ package factory;
 
 import entity.*;
 
-import java.util.HashMap;
-
 public class DefaultIFSEntityFactory implements AbstractIFSEntityFactory {
     @Override
     public IFolder createFolder(String name) {
-        return new Folder(name, new HashMap<String, IFSEntity>());
+        return new Folder(name);
     }
 
     @Override

@@ -3,18 +3,25 @@ package httpserver.formatter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.IFSEntity;
+import entity.IFile;
+import entity.IFolder;
+import entity.ISymLink;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class JSONFormatter implements IFormatter {
     @Override
-    public byte[] formatFolder(List<IFSEntity> entities) throws JsonProcessingException {
+    public byte[] formatFolder(List<IFolder> folders, List<IFile> files, List<ISymLink> links) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        String jsonString = mapper.writeValueAsString(entities);
-        StringBuilder stringBuilder = new StringBuilder(jsonString);
-        stringBuilder.insert(0, "{\"result\": ");
-        stringBuilder.insert(stringBuilder.length(), "}");
+        String foldersString = mapper.writeValueAsString(folders);
+        StringBuilder stringBuilder = new StringBuilder(foldersString);
+        String filesString = mapper.writeValueAsString(files);
+        String linksString = mapper.writeValueAsString(links);
+        stringBuilder.insert(0, "{\"result\": { \"folders\": ");
+        stringBuilder.insert(stringBuilder.length(), ", \"files\": " + filesString);
+        stringBuilder.insert(stringBuilder.length(), ", \"links\": ");
+        stringBuilder.insert(stringBuilder.length(), linksString + "}}");
         return stringBuilder.toString().getBytes(StandardCharsets.UTF_8);
     }
 

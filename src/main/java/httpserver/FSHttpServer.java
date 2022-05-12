@@ -5,7 +5,7 @@ import factory.AbstractIFSEntityFactory;
 import httpserver.config.ConfigurationManager;
 import httpserver.formatter.IFormatter;
 import httpserver.formatter.JSONFormatter;
-import httpserver.handlers.MainHandler;
+import httpserver.handlers.RequestHandler;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -15,9 +15,9 @@ public class FSHttpServer implements IFSHttpServer {
     com.sun.net.httpserver.HttpServer httpServer;
     ConfigurationManager configManager = ConfigurationManager.getInstance();
 
-    public void createServer(AbstractIFSEntityFactory entityFactory) {
+    public void createServer(AbstractIFSEntityFactory entityFactory) throws IOException {
         IFormatter formatter = new JSONFormatter();
-        HttpHandler handler = new MainHandler(entityFactory, formatter);
+        HttpHandler handler = new RequestHandler(entityFactory, formatter);
         try {
             this.configManager.loadConfigFile("src/main/resources/XML/config.xml");
             this.httpServer = com.sun.net.httpserver.HttpServer.create(new InetSocketAddress(configManager.getConfiguration().getPort()), 0);

@@ -7,10 +7,14 @@ import java.util.Map;
 public class Root implements IFolder {
     private static final String NAME = "/";
     private static Root instance;
-    private Map<String, IFSEntity> content;
+    private Map<String, IFolder> folders;
+    private Map<String, IFile> files;
+    private Map<String, ISymLink> links;
 
     private Root() {
-        this.content = new HashMap<>();
+        this.folders = new HashMap<>();
+        this.files = new HashMap<>();
+        this.links = new HashMap<>();
     }
 
     public static Root getInstance() {
@@ -25,9 +29,9 @@ public class Root implements IFolder {
     @Override
     public int getSize() {
         int size = 0;
-        for (String fs : content.keySet()
+        for (String fs : folders.keySet()
         ) {
-            size += content.get(fs).getSize();
+            size += folders.get(fs).getSize();
         }
         return size;
     }
@@ -42,47 +46,97 @@ public class Root implements IFolder {
         return FILE_TYPE.FOLDER;
     }
 
-    public Map<String, IFSEntity> getContent() {
-        return content;
+    public Map<String, IFolder> getContent() {
+        return folders;
     }
 
-
-
-    /*@Override
-    public IFSEntity getElement(String[] path, int i) {
-        return null;
-    }*/
-
-    public IFSEntity getElement(String[] path, int index) {
-        IFSEntity entity = this.content.get(path[index]);
+    @Override
+    public IFolder getFolder(String[] path, int index) {
+        IFolder entity = this.folders.get(path[index]);
         if (entity != null) {
             if (index == path.length - 1) {
-                return this.content.get(path[index]);
+                return entity;
             } else if (entity.getType().equals(FILE_TYPE.FOLDER)) {
-                return ((IFolder) entity).getElement(path, ++index);
+                return entity.getFolder(path, ++index);
             }
         }
         return null;
     }
 
     @Override
-    public boolean addElement(IFSEntity entity) {
-        if (content.put(entity.getName(), entity) != null) {
-            return true;
+    public IFile getFile(String[] path, int index) {
+        if (index == path.length - 1) {
+            IFile entity = this.files.get(path[index]);
+            return entity;
+        } else {
+            IFolder folder = this.folders.get(path[index]);
+            return folder.getFile(path, ++index);
+        }
+    }
+
+    @Override
+    public ISymLink getSymLink(String[] path, int index) {
+        if (index == path.length - 1) {
+            ISymLink entity = this.links.get(path[index]);
+            return entity;
+        } else {
+            IFolder folder = this.folders.get(path[index]);
+            return folder.getSymLink(path, ++index);
+        }
+    }
+
+    @Override
+    public boolean addFolder(IFolder entity) {
+        if (!this.files.containsKey(entity.getName()) && !this.folders.containsKey(entity.getName()) && !this.links.containsKey(entity.getName()))
+            return (folders.put(entity.getName(), entity) != null);
+        return false;
+    }
+
+    @Override
+    public boolean addFile(IFile entity) {
+        if (!this.files.containsKey(entity.getName()) && !this.folders.containsKey(entity.getName()) && !this.links.containsKey(entity.getName()))
+            return (files.put(entity.getName(), entity) != null);
+        return false;
+    }
+
+    @Override
+    public boolean addSymLink(ISymLink entity) {
+        System.out.println("ADD");
+        if (!this.links.containsKey(entity.getName()) && !this.folders.containsKey(entity.getName()) && !this.links.containsKey(entity.getName())) {
+            System.out.println("INSIDE ADD SYMLINK");
+            return (links.put(entity.getName(), entity) != null);
         }
         return false;
     }
+
 
     @Override
     public boolean removeElement(String[] path, int index) {
-        IFSEntity entity = this.content.get(path[index]);
-        if (entity != null) {
-            if (index == path.length - 1) {
-                if (this.content.remove(path[index]) != null) return true;
-            } else if (entity.getType().equals(FILE_TYPE.FOLDER)) {
-                return ((IFolder) entity).removeElement(path, ++index);
-            }
+        System.out.println("LOL");
+        if (index == path.length - 1) {
+            if (this.folders.remove(path[index]) != null || this.files.remove(path[index]) != null || this.links.remove(path[index]) != null)
+                return true;
+        } else {
+            IFolder entity = this.folders.get(path[index]);
+            if (entity != null)
+                return entity.removeElement(path, ++index);
         }
         return false;
     }
+
+    @Override
+    public Map<String, IFolder> getFolders() {
+        return this.folders;
+    }
+
+    @Override
+    public Map<String, IFile> getFiles() {
+        return this.files;
+    }
+
+    @Override
+    public Map<String, ISymLink> getSymLinks() {
+        return this.links;
+    }
+
 }
