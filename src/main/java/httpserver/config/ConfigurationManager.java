@@ -11,18 +11,18 @@ public class ConfigurationManager {
     }
 
     public static ConfigurationManager getInstance() {
-        if(configurationManagerInstance == null) {
+        if (configurationManagerInstance == null) {
             configurationManagerInstance = new ConfigurationManager();
         }
         return configurationManagerInstance;
     }
 
-    public void loadConfigFile(String path) {
+    public void loadConfiguration(String path) {
         IConfigurationBuilder builder = new ConfigurationBuilder();
         IConfigParser parser = new XMLConfigParser();
         try {
             parser.load(builder, path);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         this.configuration = builder.getResult();

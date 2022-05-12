@@ -2,11 +2,10 @@ package entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Setter
 @Getter
-public class SymLink implements IFSEntity{
+public class SymLink implements IFSEntity {
     private Name name;
     private String content;
     private FILE_TYPE type;

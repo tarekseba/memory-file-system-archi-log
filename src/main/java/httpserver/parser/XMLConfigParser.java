@@ -16,7 +16,6 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 import java.io.File;
 import java.io.IOException;
-import java.io.StringReader;
 
 public class XMLConfigParser implements IConfigParser {
 
@@ -25,7 +24,7 @@ public class XMLConfigParser implements IConfigParser {
         builder.startBuild();
         SAXParserFactory spf = SAXParserFactory.newInstance();
         spf.setValidating(true);
-        valid(new File("src/main/resources/XML/config.xsd"),new File("src/main/resources/XML/config.xml"));
+        validate(new File("src/main/resources/XML/config.xsd"), new File("src/main/resources/XML/config.xml"));
         XMLConfigHandler handler = new XMLConfigHandler(builder);
         SAXParser sp = spf.newSAXParser();
         XMLReader xmlReader = sp.getXMLReader();
@@ -40,14 +39,14 @@ public class XMLConfigParser implements IConfigParser {
         }
     }
 
-    public boolean valid(File xsdfile, File xmlfile) throws IOException, SAXException {
-        Source xml=new StreamSource(xmlfile);
-        SchemaFactory schemaFactory=SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    public boolean validate(File xsdfile, File xmlfile) throws IOException, SAXException {
+        Source xml = new StreamSource(xmlfile);
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         try {
-            Schema schema=schemaFactory.newSchema(xsdfile);
-            Validator validator=schema.newValidator();
+            Schema schema = schemaFactory.newSchema(xsdfile);
+            Validator validator = schema.newValidator();
             validator.validate(xml);
-        } catch (IOException|SAXException e) {
+        } catch (IOException | SAXException e) {
             throw e;
         }
         return true;

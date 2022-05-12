@@ -12,6 +12,6 @@ import java.util.Map;
 public class Dto {
     String name;
     FILE_TYPE type;
-    Map<String,Byte>content;
+    Map<String, Byte> content;
     String path;
 }

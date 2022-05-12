@@ -2,8 +2,10 @@ package httpserver.config;
 
 public interface IConfigurationBuilder {
     void startBuild();
-    void setPort(String port);
-    void setContext(String context);
+
+    public void setPort(String port) throws NumberFormatException;
+
+    public void setContext(String context);
 
     Configuration getResult();
 }

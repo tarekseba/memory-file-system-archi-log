@@ -1,6 +1,9 @@
 package factory;
 
-import entity.*;
+import entity.File;
+import entity.Folder;
+import entity.IFSEntity;
+import entity.SymLink;
 
 import java.util.HashMap;
 

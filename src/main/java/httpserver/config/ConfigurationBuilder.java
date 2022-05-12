@@ -1,9 +1,5 @@
 package httpserver.config;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConfigurationBuilder implements IConfigurationBuilder {
     private int port;
     private String context;
@@ -14,12 +10,10 @@ public class ConfigurationBuilder implements IConfigurationBuilder {
         this.context = "";
     }
 
-    @Override
-    public void setPort(String port) throws NumberFormatException{
+    public void setPort(String port) throws NumberFormatException {
         this.port = Integer.parseInt(port);
     }
 
-    @Override
     public void setContext(String context) {
         this.context = context;
     }

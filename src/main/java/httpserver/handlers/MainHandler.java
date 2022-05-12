@@ -23,79 +23,76 @@ public class MainHandler implements HttpHandler {
 
     public MainHandler(AbstractIFSEntityFactory entityFactory, IFormatter formatter) {
         this.formatter = formatter;
-        root=Root.getInstance();
+        root = Root.getInstance();
         this.fsEntityFactory = entityFactory;
         IFolder folder = entityFactory.createFolder("folder1");
-        folder.addElement(entityFactory.createFile("file5","file5".getBytes()));
+        folder.addElement(entityFactory.createFile("file5", "file5".getBytes()));
         IFolder folder2 = entityFactory.createFolder("folder2");
-        folder2.addElement(entityFactory.createFile("file6","file5".getBytes()));
-        folder.addElement(entityFactory.createFile("file7","file5".getBytes()));
-        folder.addElement(entityFactory.createFile("file8","file5".getBytes()));
+        folder2.addElement(entityFactory.createFile("file6", "file5".getBytes()));
+        folder.addElement(entityFactory.createFile("file7", "file5".getBytes()));
+        folder.addElement(entityFactory.createFile("file8", "file5".getBytes()));
         root.addElement(entityFactory.createSymLink("symlink1", "/folder1"));
         folder.addElement(folder2);
-        root.addElement(new File("file1","file1".getBytes()));
-        root.addElement(new File("file2",null));
-        root.addElement(new File("file3",null));
-        root.addElement(new File("file4",null));
+        root.addElement(new File("file1", "file1".getBytes()));
+        root.addElement(new File("file2", null));
+        root.addElement(new File("file3", null));
+        root.addElement(new File("file4", null));
         root.addElement(folder);
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        String methodeRequest= exchange.getRequestMethod();
+        String methodeRequest = exchange.getRequestMethod();
 
-        Headers responseHeader=exchange.getResponseHeaders();
+        Headers responseHeader = exchange.getResponseHeaders();
         responseHeader.set("Content-Type", "application/json");
         responseHeader.set("Access-Control-Allow-Origin", "*");
         responseHeader.add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         responseHeader.add("Access-Control-Allow-Headers", "Content-Type,Authorization");
         //exchange.sendResponseHeaders(200,0);
 
-        ObjectMapper mapper=new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
 
 
-        if(methodeRequest.equalsIgnoreCase("GET")){
+        if (methodeRequest.equalsIgnoreCase("GET")) {
             OutputStream reponse = exchange.getResponseBody();
-            if(exchange.getRequestURI().toString().equals("/")){
+            if (exchange.getRequestURI().toString().equals("/")) {
 
                 try {
-                    List<IFSEntity> list=new ArrayList<>(root.getContent().values());
-                    exchange.sendResponseHeaders(200,0);
+                    List<IFSEntity> list = new ArrayList<>(root.getContent().values());
+                    exchange.sendResponseHeaders(200, 0);
                     reponse.write(formatter.formatFolder(list));
                 } catch (Exception e) {
-                    exchange.sendResponseHeaders(500,0);
+                    exchange.sendResponseHeaders(500, 0);
                     reponse.write(formatter.formatError("Error while formatting"));
                 }
-            }
-            else if(exchange.getRequestURI().toString().equals("/favicon.ico")){
-                exchange.sendResponseHeaders(200,0);
+            } else if (exchange.getRequestURI().toString().equals("/favicon.ico")) {
+                exchange.sendResponseHeaders(200, 0);
                 reponse.close();
             } else {
-                String[] path=exchange.getRequestURI().toString().split("/");
+                String[] path = exchange.getRequestURI().toString().split("/");
 
                 try {
-                    String jsonString="";
-                    IFSEntity entity=root.getElement(path,1);
+                    String jsonString = "";
+                    IFSEntity entity = root.getElement(path, 1);
                     String entityType = entity.getType().toString();
-                    if(entityType.equals("FILE")){
-                        exchange.sendResponseHeaders(200,0);
-                        reponse.write(((File)entity).getContent());
-                    }
-                    else if (entityType.equals("FOLDER")){
-                        List<IFSEntity> list=new ArrayList<>(((Folder)entity).getContent().values());
-                        exchange.sendResponseHeaders(200,0);
+                    if (entityType.equals("FILE")) {
+                        exchange.sendResponseHeaders(200, 0);
+                        reponse.write(((File) entity).getContent());
+                    } else if (entityType.equals("FOLDER")) {
+                        List<IFSEntity> list = new ArrayList<>(((Folder) entity).getContent().values());
+                        exchange.sendResponseHeaders(200, 0);
                         reponse.write(formatter.formatFolder(list));
-                    }
-                    else if(entityType.equals("LINK")){
-                        String filePath = ((SymLink)entity).getContent();
+                    } else if (entityType.equals("LINK")) {
+                        String filePath = ((SymLink) entity).getContent();
                         IFSEntity linkedEntity = root.getElement(filePath.split("/"), 1);
-                        if(linkedEntity != null) {
+                        if (linkedEntity != null) {
                             switch (linkedEntity.getType().toString()) {
                                 case "FILE":
-                                    exchange.sendResponseHeaders(200,0);
-                                    reponse.write(((File)linkedEntity).getContent());
+                                    exchange.sendResponseHeaders(200, 0);
+                                    reponse.write(((File) linkedEntity).getContent());
                                     break;
-                                default :
+                                default:
                                     exchange.sendResponseHeaders(400, 0);
                                     reponse.write(formatter.formatError("Symlink points to a folder"));
 
@@ -109,26 +106,24 @@ public class MainHandler implements HttpHandler {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    exchange.sendResponseHeaders(500,0);
+                    exchange.sendResponseHeaders(500, 0);
                     reponse.write(formatter.formatError("ERROR"));
                 }
             }
             reponse.close();
-        }
-        else if (methodeRequest.equalsIgnoreCase("DELETE")){
+        } else if (methodeRequest.equalsIgnoreCase("DELETE")) {
             OutputStream reponse = exchange.getResponseBody();
-            if(exchange.getRequestURI().toString()!="/"){
-                if(root.removeElement(exchange.getRequestURI().toString().split("/"),1)){
-                    exchange.sendResponseHeaders(200,0);
+            if (exchange.getRequestURI().toString() != "/") {
+                if (root.removeElement(exchange.getRequestURI().toString().split("/"), 1)) {
+                    exchange.sendResponseHeaders(200, 0);
                     reponse.write("Suppression effectué".getBytes());
                 }
             }
             reponse.close();
-        }
-        else if (methodeRequest.equalsIgnoreCase("POST")){
+        } else if (methodeRequest.equalsIgnoreCase("POST")) {
             System.out.println("INSIDE");
             OutputStream reponse = exchange.getResponseBody();
-            InputStreamReader isr =  new InputStreamReader(exchange.getRequestBody(),"utf-8");
+            InputStreamReader isr = new InputStreamReader(exchange.getRequestBody(), "utf-8");
             BufferedReader br = new BufferedReader(isr);
             int b;
             StringBuilder buf = new StringBuilder(512);
@@ -138,62 +133,57 @@ public class MainHandler implements HttpHandler {
             br.close();
             isr.close();
             try {
-                ObjectMapper objectMapper=new ObjectMapper();
+                ObjectMapper objectMapper = new ObjectMapper();
 
-                Dto dto=objectMapper.readValue(buf.toString(), Dto.class);
+                Dto dto = objectMapper.readValue(buf.toString(), Dto.class);
 
-                if(dto.getType().toString().equals("FILE")){
-                    byte[] tabByte=new byte[dto.getContent().values().size()];
+                if (dto.getType().toString().equals("FILE")) {
+                    byte[] tabByte = new byte[dto.getContent().values().size()];
                     int i = 0;
-                    for(Byte by : (new ArrayList<>(dto.getContent().values()))){
+                    for (Byte by : (new ArrayList<>(dto.getContent().values()))) {
                         tabByte[i++] = by.byteValue();
                     }
-                    if(exchange.getRequestURI().toString().equals("/")){
+                    if (exchange.getRequestURI().toString().equals("/")) {
                         root.addElement(new File(dto.getName(), tabByte));
-                    }
-                    else {
-                        String[] path=exchange.getRequestURI().toString().split("/");
-                        IFSEntity entity=root.getElement(path,1);
-                        if(entity!=null && entity.getType().toString().equals("FOLDER")){
-                            ((Folder)entity).addElement(new File(dto.getName(), tabByte));
+                    } else {
+                        String[] path = exchange.getRequestURI().toString().split("/");
+                        IFSEntity entity = root.getElement(path, 1);
+                        if (entity != null && entity.getType().toString().equals("FOLDER")) {
+                            ((Folder) entity).addElement(new File(dto.getName(), tabByte));
                         }
                     }
-                } if(dto.getType().toString().equals("LINK")){
+                }
+                if (dto.getType().toString().equals("LINK")) {
                     System.out.println("LINK SUBMITTED");
                     int i = 0;
-                    if(exchange.getRequestURI().toString().equals("/")){
+                    if (exchange.getRequestURI().toString().equals("/")) {
                         root.addElement(fsEntityFactory.createSymLink(dto.getName(), dto.getPath()));
+                    } else {
+                        String[] path = exchange.getRequestURI().toString().split("/");
+                        IFSEntity entity = root.getElement(path, 1);
+                        if (entity != null && entity.getType().toString().equals("FOLDER")) {
+                            ((Folder) entity).addElement(fsEntityFactory.createSymLink(dto.getName(), dto.getPath()));
+                        }
                     }
-                    else {
-                        String[] path=exchange.getRequestURI().toString().split("/");
-                        IFSEntity entity=root.getElement(path,1);
-                        if(entity!=null && entity.getType().toString().equals("FOLDER")){
-                            ((Folder)entity).addElement(fsEntityFactory.createSymLink(dto.getName(), dto.getPath()));
+                } else if (dto.getType().toString().equals("FOLDER")) {
+                    if (exchange.getRequestURI().toString().equals("/")) {
+                        root.addElement(new Folder(dto.getName(), new HashMap<>()));
+                    } else {
+                        String[] path = exchange.getRequestURI().toString().split("/");
+                        IFSEntity entity = root.getElement(path, 1);
+                        if (entity != null && entity.getType().toString().equals("FOLDER")) {
+                            ((Folder) entity).addElement(new Folder(dto.getName(), new HashMap<>()));
                         }
                     }
                 }
-                else if (dto.getType().toString().equals("FOLDER")) {
-                    if(exchange.getRequestURI().toString().equals("/")){
-                        root.addElement(new Folder(dto.getName(),new HashMap<>()));
-                    }
-                    else {
-                        String[] path=exchange.getRequestURI().toString().split("/");
-                        IFSEntity entity=root.getElement(path,1);
-                        if(entity!=null && entity.getType().toString().equals("FOLDER")){
-                            ((Folder)entity).addElement(new Folder(dto.getName(), new HashMap<>()));
-                        }
-                    }
-                }
-                exchange.sendResponseHeaders(200,0);
-            }
-            catch (Exception exception){
-                exchange.sendResponseHeaders(500,0);
+                exchange.sendResponseHeaders(200, 0);
+            } catch (Exception exception) {
+                exchange.sendResponseHeaders(500, 0);
                 exception.printStackTrace();
             }
             reponse.close();
-        }
-        else {
-            exchange.sendResponseHeaders(200,0);
+        } else {
+            exchange.sendResponseHeaders(200, 0);
             exchange.getResponseBody().close();
         }
     }
