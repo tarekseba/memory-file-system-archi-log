@@ -3,18 +3,16 @@ package httpserver.formatter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import entity.IFSEntity;
-import entity.IFolder;
 
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.List;
 
 public class JSONFormatter implements IFormatter {
     @Override
     public byte[] formatFolder(List<IFSEntity> entities) throws JsonProcessingException {
-        ObjectMapper mapper=new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         String jsonString = mapper.writeValueAsString(entities);
-        StringBuilder stringBuilder=new StringBuilder(jsonString);
+        StringBuilder stringBuilder = new StringBuilder(jsonString);
         stringBuilder.insert(0, "{\"result\": ");
         stringBuilder.insert(stringBuilder.length(), "}");
         return stringBuilder.toString().getBytes(StandardCharsets.UTF_8);

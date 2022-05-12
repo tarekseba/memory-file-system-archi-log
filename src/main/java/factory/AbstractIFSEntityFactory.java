@@ -1,11 +1,13 @@
 package factory;
 
-import entity.SymLink;
-import entity.File;
-import entity.Folder;
+import entity.IFile;
+import entity.IFolder;
+import entity.ISymLink;
 
 public interface AbstractIFSEntityFactory {
-    Folder createFolder(String name);
-    File createFile(String name, byte[] content);
-    SymLink createSymLink(String name, String path);
+    IFolder createFolder(String name);
+
+    IFile createFile(String name, byte[] content);
+
+    ISymLink createSymLink(String name, String path);
 }

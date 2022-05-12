@@ -4,10 +4,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class XMLConfigHandler extends DefaultHandler implements ContentHandler{
+public class XMLConfigHandler extends DefaultHandler implements ContentHandler {
     IConfigurationBuilder configBuilder;
     List<Element> elements;
 
@@ -31,7 +32,7 @@ public class XMLConfigHandler extends DefaultHandler implements ContentHandler{
 
         elements.add(new Element(qName.trim(), atts));
         String val;
-        switch(qName.trim()){
+        switch (qName.trim()) {
             case "port":
                 val = atts.getValue("value");
                 this.configBuilder.setPort(val);

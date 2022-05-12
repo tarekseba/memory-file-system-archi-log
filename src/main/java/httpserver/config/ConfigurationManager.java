@@ -11,7 +11,7 @@ public class ConfigurationManager {
     }
 
     public static ConfigurationManager getInstance() {
-        if(configurationManagerInstance == null) {
+        if (configurationManagerInstance == null) {
             configurationManagerInstance = new ConfigurationManager();
         }
         return configurationManagerInstance;
@@ -22,7 +22,7 @@ public class ConfigurationManager {
         IConfigParser parser = new XMLConfigParser();
         try {
             parser.load(builder, path);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         this.configuration = builder.getResult();

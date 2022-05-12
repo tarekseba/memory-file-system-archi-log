@@ -1,11 +1,11 @@
 import factory.AbstractIFSEntityFactory;
 import factory.DefaultIFSEntityFactory;
-import httpserver.HttpServer;
-import httpserver.IHttpServer;
+import httpserver.FSHttpServer;
+import httpserver.IFSHttpServer;
 
 public class Client {
     public static void main(String[] args) {
-        IHttpServer httpServer = new HttpServer();
+        IFSHttpServer httpServer = new FSHttpServer();
         AbstractIFSEntityFactory entityFactory = new DefaultIFSEntityFactory();
         try {
             httpServer.createServer(entityFactory);
