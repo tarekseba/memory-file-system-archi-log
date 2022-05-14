@@ -16,31 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RequestHandler implements HttpHandler {
-    Root root;
     AbstractIFSEntityFactory fsEntityFactory;
     IFormatter formatter;
 
     public RequestHandler(AbstractIFSEntityFactory entityFactory, IFormatter formatter) throws IOException {
         this.formatter = formatter;
-        root = Root.getInstance();
         this.fsEntityFactory = entityFactory;
-        IFolder folder = entityFactory.createFolder("folder1");
-        folder.addFile(entityFactory.createFile("file5", "file5".getBytes()));
-        IFolder folder2 = entityFactory.createFolder("folder2");
-        folder2.addFile(entityFactory.createFile("file6", "file5".getBytes()));
-        folder.addFile(entityFactory.createFile("file7", "file5".getBytes()));
-        folder.addFile(entityFactory.createFile("file8", "file5".getBytes()));
-        root.addSymLink(entityFactory.createSymLink("symlink1", "/file1"));
-        folder.addFolder(folder2);
-        root.addFile(this.fsEntityFactory.createFile("file1", "file1".getBytes()));
-        root.addFile(this.fsEntityFactory.createFile("file2", "file2".getBytes()));
-        root.addFile(this.fsEntityFactory.createFile("file3", "file3".getBytes()));
-        root.addFile(this.fsEntityFactory.createFile("file4", "file4".getBytes()));
-        root.addFolder(folder);
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
+        Root root = Root.getInstance();
         String methodeRequest = exchange.getRequestMethod();
 
         Headers responseHeader = exchange.getResponseHeaders();
