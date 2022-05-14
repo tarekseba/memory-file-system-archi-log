@@ -25,6 +25,10 @@ public class Folder implements IFolder {
         ) {
             size += folders.get(fs).getSize();
         }
+        for (String fs : files.keySet()
+        ) {
+            size += files.get(fs).getSize();
+        }
         return size;
     }
 
@@ -95,7 +99,6 @@ public class Folder implements IFolder {
 
     @Override
     public boolean removeElement(String[] path, int index) {
-        System.out.println("LOL");
         if (index == path.length - 1) {
             if (this.folders.remove(path[index]) != null || this.files.remove(path[index]) != null || this.links.remove(path[index]) != null)
                 return true;

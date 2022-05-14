@@ -29,9 +29,11 @@ public class Root implements IFolder {
     @Override
     public int getSize() {
         int size = 0;
-        for (String fs : folders.keySet()
-        ) {
+        for (String fs : folders.keySet()) {
             size += folders.get(fs).getSize();
+        }
+        for (String fs : files.keySet()) {
+            size += files.get(fs).getSize();
         }
         return size;
     }
@@ -101,9 +103,7 @@ public class Root implements IFolder {
 
     @Override
     public boolean addSymLink(ISymLink entity) {
-        System.out.println("ADD");
         if (!this.links.containsKey(entity.getName()) && !this.folders.containsKey(entity.getName()) && !this.links.containsKey(entity.getName())) {
-            System.out.println("INSIDE ADD SYMLINK");
             return (links.put(entity.getName(), entity) != null);
         }
         return false;
@@ -112,7 +112,6 @@ public class Root implements IFolder {
 
     @Override
     public boolean removeElement(String[] path, int index) {
-        System.out.println("LOL");
         if (index == path.length - 1) {
             if (this.folders.remove(path[index]) != null || this.files.remove(path[index]) != null || this.links.remove(path[index]) != null)
                 return true;

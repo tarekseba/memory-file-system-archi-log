@@ -22,10 +22,12 @@ public class ConfigurationManager {
         IConfigParser parser = new XMLConfigParser();
         try {
             parser.load(builder, path);
+            this.configuration = builder.getResult();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("An error occurred during parsing, launching server on default port 8080");
+            this.configuration = new Configuration(8080, "");
         }
-        this.configuration = builder.getResult();
     }
 
     public Configuration getConfiguration() {
